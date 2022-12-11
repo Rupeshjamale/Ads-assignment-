@@ -70,20 +70,6 @@ plt.pie(Energy_use, labels= countries, shadow=True, autopct=('%1.1f%%'))# We use
 plt.title("Electricity production from renewable sources, excluding hydroelectric (% of total)") # This function is for showing title of data
 plt.show()
         
-#Read the file into dataframes.
-df, df2 = getdata('API_19_DS2_en_csv_v2_4700503.csv') # reading file to dataframes using defined function.
-df2 = df2.loc[df2['Indicator Code'].eq('EG.USE.COMM.GD.PP.KD')] # Filter data using indicator code.
-df2 = df2.loc[df2['Years'].isin(['2015'])]
-
-#Statatical function return the mean of the co2 emission of the country.
-df2_min = df2[["Finland","Switzerland","Belgium","Germany"]].min()
-print(df2_min)
-df2_skew = stats.skew(df2[countries])
-print(df2_skew)
-
-#converting the data to csv file
-df2 = df2.to_csv("mean.csv")
- 
 #------------------------------------------------------------------------------
 #Barplot for Access to electricity (% of population)
 #------------------------------------------------------------------------------
@@ -116,6 +102,7 @@ df2 = df2.loc[df2['Indicator Code'].eq('EG.ELC.RNEW.ZS')] # Filter data using in
 plt.figure()
 df2['Years'] = pd.to_numeric(df2['Years'])
 df2.plot("Years", countries, title='Renewable electricity output (% of total electricity output)')
+plt.xlim(1990,2015)
 plt.legend(loc='center left',bbox_to_anchor=(1,0.5))
 plt.show()
 
@@ -165,9 +152,26 @@ plt.xticks(num, years)
 plt.xlabel('Years')
 plt.ylabel('% Of Population')
 plt.legend(loc='center left',bbox_to_anchor=(1,0.5)) # To show legends outside of the box
-plt.show()
+plt.show(
+    )
+#------------------------------------------------------------------------------
+#Statistical analysis for total population of the world
+#------------------------------------------------------------------------------
+df, df2 = getdata('API_19_DS2_en_csv_v2_4700503.csv') # reading file to dataframes using defined function.
+df2 = df2.loc[df2['Indicator Code'].eq('SP.POP.TOTL')]
+# Filter data by years
+df2 = df2[(df2['Years']>="2000") & (df2['Years']<="2004")]
+# Cleaning data by droping nan values
+df2.dropna()
+#Statistical analisis of total population
+countries_mean = np.mean(df2[countries]) # for mean 
+countries_std = np.std(df2[countries] )# for standerd daviation
+countries_skew = stats.skew(df2[countries]) # for skewness
+countries_kurtosis = stats.kurtosis(df2[countries])# for kurtosis
 
-
-
+print("countries_mean: ",countries_mean)
+print("countries_std: ",countries_std)
+print("countries_skew: ",countries_skew)
+print("countries_kurtosis: ",countries_kurtosis)
 
 
